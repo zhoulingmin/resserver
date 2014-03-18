@@ -18,7 +18,7 @@ public class PhoenixProperties extends Properties {
 	private PhoenixProperties() {
 		MiscUtils.getLogger().debug("PHOENIX PROPS CONSTRUCTOR");
 		try {
-			readFromFile("/phoenixCloud.properties");
+			readFromFile("/resserver.properties");
 		} catch (IOException e) {
 			MiscUtils.getLogger().error("Error", e);
 		}
