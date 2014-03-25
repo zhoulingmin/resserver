@@ -25,37 +25,40 @@ import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 import com.sun.jersey.multipart.FormDataParam;
 
-@Path("/book")
-public class BookAction {
+@Path("/res")
+public class ResAction {
 	
 	private PhoenixProperties prop = PhoenixProperties.getInstance();
 	
 	@POST
-	@Path("uploadFile/{code}/{fileName}")
+	@Path("uploadFile/{code}/{cataAddr}/{fileName}")
 	//@Consumes(MediaType.APPLICATION_OCTET_STREAM)
-	@Produces({MediaType.APPLICATION_JSON,MediaType.APPLICATION_XML})
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
 	public String uploadFile(InputStream fis,
 			@PathParam("code") String code,
+			@PathParam("cataAddr") String cataAddr,
 			@PathParam("fileName") String fileName) {
 		
 		JSONObject retObj = new JSONObject();
 		try {
 			fileName = URLDecoder.decode(fileName, "utf-8");
+			cataAddr = URLDecoder.decode(cataAddr, "utf-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 			retObj.put("ret", 1);
 			retObj.put("error", e1.toString());
 		}
-		String bookDir = prop.getProperty("book_file_folder");
-		File folder = new File(bookDir + File.separator + code);
+		String bookDir = prop.getProperty("book_res_folder");
+		String folderStr = bookDir + File.separator + code + File.separator + cataAddr;
+		File folder = new File(folderStr);
 		if (!folder.exists()) {
 			folder.mkdirs();
 		}
 		
 		OutputStream fos = null;
 		try {
-			fos = new FileOutputStream(new File(bookDir + File.separator + code + File.separator + fileName));
+			fos = new FileOutputStream(new File(folderStr + File.separator + fileName));
 			byte[] buffer = new byte[1024 * 16];
 			int len = 0;
 			while ((len = fis.read(buffer)) != -1) {
@@ -84,19 +87,22 @@ public class BookAction {
 	}
 	
 	@GET
-	@Path("downloadFile/{code}/{fileName}")
+	@Path("downloadFile/{code}/{cataAddr}/{fileName}")
 	@Produces(MediaType.APPLICATION_OCTET_STREAM)
 	public Response downloadFile(@PathParam("code") String code,
+			@PathParam("cataAddr") String cataAddr,
 			@PathParam("fileName") String fileName) {	
 
 		String bookDir = prop.getProperty("book_file_folder");
 		try {
 			fileName = URLDecoder.decode(fileName, "utf-8");
+			cataAddr = URLDecoder.decode(cataAddr, "utf-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			throw new WebApplicationException(404);
 		}
-		File file = new File(bookDir + File.separator + code, fileName);
+		String folderStr = bookDir + File.separator + code + File.separator + cataAddr;
+		File file = new File(folderStr, fileName);
 		if (!file.exists()) {
 			throw new WebApplicationException(404);
 		}
@@ -112,6 +118,6 @@ public class BookAction {
 				.ok(file, mt)
 				.header("Content-disposition","attachment;filename=\"" + downFileName + "\"")
 				.header("ragma", "No-cache").header("Cache-Control", "no-cache").build();
-	}
+	}	
 	
 }
