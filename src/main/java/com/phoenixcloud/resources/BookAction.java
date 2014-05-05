@@ -41,6 +41,7 @@ public class BookAction {
 		JSONObject retObj = new JSONObject();
 		try {
 			fileName = URLDecoder.decode(fileName, "utf-8");
+			code = URLDecoder.decode(code, "utf-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
@@ -92,6 +93,7 @@ public class BookAction {
 		String bookDir = prop.getProperty("book_file_folder");
 		try {
 			fileName = URLDecoder.decode(fileName, "utf-8");
+			code = URLDecoder.decode(code, "utf-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
 			throw new WebApplicationException(404);

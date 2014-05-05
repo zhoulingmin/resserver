@@ -41,6 +41,7 @@ public class ResAction {
 		
 		JSONObject retObj = new JSONObject();
 		try {
+			code = URLDecoder.decode(code, "utf-8");
 			fileName = URLDecoder.decode(fileName, "utf-8");
 			cataAddr = URLDecoder.decode(cataAddr, "utf-8");
 		} catch (UnsupportedEncodingException e1) {
@@ -86,6 +87,7 @@ public class ResAction {
 		
 		JSONObject retObj = new JSONObject();
 		try {
+			code = URLDecoder.decode(code, "utf-8");
 			fileName = URLDecoder.decode(fileName, "utf-8");
 		} catch (UnsupportedEncodingException e1) {
 			// TODO Auto-generated catch block
