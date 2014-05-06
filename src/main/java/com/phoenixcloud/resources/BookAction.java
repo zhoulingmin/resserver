@@ -57,7 +57,7 @@ public class BookAction {
 		OutputStream fos = null;
 		try {
 			fos = new FileOutputStream(new File(bookDir + File.separator + code + File.separator + fileName));
-			byte[] buffer = new byte[1024 * 16];
+			byte[] buffer = new byte[1024];
 			int len = 0;
 			while ((len = fis.read(buffer)) != -1) {
 				fos.write(buffer, 0, len);
