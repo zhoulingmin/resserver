@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.common.Constants;
+import com.phoenixcloud.common.PhoenixProperties;
 class SocketThread extends Thread {
 	private ServerSocket serverSocket;
 

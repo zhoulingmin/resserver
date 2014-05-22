@@ -20,6 +20,7 @@ import javax.ws.rs.core.Response;
 
 import net.sf.json.JSONObject;
 
+import com.phoenixcloud.common.Constants;
 import com.phoenixcloud.common.PhoenixProperties;
 import com.phoenixcloud.util.MiscUtils;
 import com.sun.jersey.core.header.FormDataContentDisposition;
@@ -176,7 +177,12 @@ public class BookAction {
 		}
 		File file = new File(bookDir + File.separator + code, fileName);
 		if (!file.exists()) {
-			throw new WebApplicationException(404);
+			//throw new WebApplicationException(404);]
+			fileName = "cover.jpg";
+			file = new File(prop.getProperty(Constants.CLASS_PATH_KEY) + "cover.jpg");
+			if (!file.exists()) {
+				throw new WebApplicationException(404);
+			}
 		}
 		String mt = new MimetypesFileTypeMap().getContentType(file);
 		String downFileName = fileName;
