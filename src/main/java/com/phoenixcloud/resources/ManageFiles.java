@@ -56,7 +56,7 @@ public class ManageFiles {
 				break;
 			}
 			
-			path = bookDir + File.separator + oldFolder + File.separator + oldFolder + ".pkg";
+			path = bookDir + File.separator + oldFolder + File.separator + oldFolder + "." + prop.getProperty("book_suffix_name", "eth");
 			File oldBook = new File(path);
 			if (!oldBook.exists()) {
 				retObj.put("ret", 404);
@@ -64,7 +64,7 @@ public class ManageFiles {
 				break;
 			}
 			
-			path = bookDir + File.separator + oldFolder + File.separator + newFolder + ".pkg";
+			path = bookDir + File.separator + oldFolder + File.separator + newFolder + "." + prop.getProperty("book_suffix_name", "eth");
 			File newBook = new File(path);
 			if (newBook.exists() && !newBook.delete()) {
 				retObj.put("ret", 409);
