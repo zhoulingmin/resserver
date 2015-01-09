@@ -10,7 +10,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.encoding>UTF-8</maven.compiler.encoding>
-		<java.home>c:\Program Files\Java\jdk1.6.0_38</java.home>
 		<!-- <java.home>/usr/lib/jvm/java-6-sun-1.6.0.2</java.home> -->
 		<cxf.version>2.7.6</cxf.version>
 		<openjpa.version>2.2.1</openjpa.version>
@@ -93,13 +92,6 @@
 			<version>2.3.15.1</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.sun</groupId>
-			<artifactId>tools</artifactId>
-			<version>1.6.0</version>
-			<scope>system</scope>
-			<systemPath>${java.home}/lib/tools.jar</systemPath>
-		</dependency>
 		<dependency>
 			<groupId>commons-fileupload</groupId>
 			<artifactId>commons-fileupload</artifactId>
@@ -322,6 +314,31 @@
 						</resource>
 					</webResources>
 				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>set_timestamp</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<tasks>
+								<tstamp>
+									<format property="build.dateTime.value" pattern="yyyy-MM-dd hh:mm aa" />
+								</tstamp>
+								<echo message="build time : ${build.dateTime.value}" />
+								<replace file="target/classes/resserver.properties" token="${build.dateTime}" value="${build.dateTime.value}" />
+								<property environment="env" />
+								<echo message="JOB_NAME - BUILD_NUMBER : ${env.JOB_NAME} - ${env.BUILD_NUMBER}" />
+								<replace file="target/classes/resserver.properties" token="${build.JOB_NAME}" value="${env.JOB_NAME}" />
+								<replace file="target/classes/resserver.properties" token="${build.BUILD_NUMBER}" value="${env.BUILD_NUMBER}" />
+							</tasks>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>
