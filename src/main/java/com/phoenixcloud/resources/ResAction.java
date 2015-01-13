@@ -123,6 +123,88 @@ public class ResAction {
 	}
 	
 	@POST
+	@Path("uploadFileAndEncrypted/{code}/{cataAddr}/{fileName}")
+	//@Consumes(MediaType.APPLICATION_OCTET_STREAM)
+	@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON})
+	public String uploadFileAndEncrypted(InputStream fis,
+			@PathParam("code") String code,
+			@PathParam("cataAddr") String cataAddr,
+			@PathParam("fileName") String fileName) {
+		
+		JSONObject retObj = new JSONObject();
+		try {
+			code = URLDecoder.decode(code, "utf-8");
+			fileName = URLDecoder.decode(fileName, "utf-8");
+			cataAddr = URLDecoder.decode(cataAddr, "utf-8");
+		} catch (UnsupportedEncodingException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+			retObj.put("ret", 1);
+			retObj.put("error", e1.toString());
+		}
+		String bookDir = prop.getProperty("book_res_folder");
+		String folderStr = bookDir + File.separator + code + File.separator + cataAddr;
+		File folder = new File(folderStr);
+		if (!folder.exists()) {
+			folder.mkdirs();
+		}
+		
+		OutputStream fos = null;
+		try {
+			fos = new FileOutputStream(new File(folderStr + File.separator + fileName));
+			byte[] buffer = new byte[1024];
+			int len = 0;
+			while ((len = fis.read(buffer)) != -1) {
+				fos.write(buffer, 0, len);
+			}
+			fos.flush();
+			retObj.put("ret", 0);
+			fis.close();
+			fos.close();
+			
+			// compress and encrypt above file
+			String osName = System.getProperty("os.name");
+			String zipTool = prop.getProperty("zip_tool");
+			String sourceFileName = folderStr + File.separator + fileName;;
+			String zipFileName = sourceFileName + ".zip";;
+			if (osName != null 
+					&& (-1 != osName.indexOf("windows") || -1 != osName .indexOf("Windows"))) {
+				String[] command = new String[5];
+				command[0] = zipTool;
+				command[1] = "a";
+				command[2] = "-p" + MiscUtils.zipPwd;
+				command[3] = zipFileName;
+				command[4] = sourceFileName;
+				
+				MiscUtils.runtimeExec(command, zipFileName);
+				
+				// remove the original file
+				File oldFile = new File(sourceFileName);
+				if (oldFile != null) {
+					oldFile.delete();
+				}
+			} else {
+				// change directory, can't do that in linux 
+				//Runtime.getRuntime().exec(new String[]{"cd", folderStr}).waitFor();
+
+				// execute command
+				// zip -j -m -P pwd zipfile sourcefilelist
+				zipTool += " -j -m -P " + MiscUtils.zipPwd + " " + zipFileName + " " + sourceFileName;
+				MiscUtils.getLogger().info("Creating : " + zipFileName);
+				MiscUtils.getLogger().info("Running : " + zipTool);
+				String[] command = zipTool.split(" ");
+				MiscUtils.runtimeExec(command, zipFileName);
+			}
+			
+		} catch (Exception e) {
+			retObj.put("ret", 1);
+			retObj.put("error", e.toString());
+		}
+
+		return retObj.toString();
+	}
+	
+	@POST
 	@Path("test")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
