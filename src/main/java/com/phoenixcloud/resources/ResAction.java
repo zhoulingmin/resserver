@@ -276,6 +276,9 @@ public class ResAction {
 		}
 		return Response
 				.ok(file, mt)
+				// attachment: indicates download,  inline: indicates opening file in browser.
+				// And add the following statement
+				// .header("Content-Type", "application/x-shockwave-flash")
 				.header("Content-disposition","attachment;filename=\"" + downFileName + "\"")
 				.header("ragma", "No-cache").header("Cache-Control", "no-cache").build();
 	}
